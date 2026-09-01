@@ -257,7 +257,6 @@ public class ScriptGeneral : MonoBehaviour
         if (response != null && response.usuarios != null && leaderboardText != null)
         {
             StringBuilder sb = new StringBuilder();
-            sb.AppendLine("<b>--- RANKING DE JUGADORES ---</b>");
 
             foreach (UserData user in response.usuarios)
             {
