@@ -10,7 +10,7 @@ public class FirebaseService : MonoBehaviour
 {
     // google-services.json se descargó antes de crear la base de datos, por eso no trae la URL.
     // Se copia de la consola de Firebase: Realtime Database > Datos (la URL de arriba).
-    public const string DatabaseUrl = "PEGAR_AQUI_LA_URL_DE_LA_REALTIME_DATABASE";
+    public const string DatabaseUrl = "https://sfd4-firebase-default-rtdb.firebaseio.com/";
 
     public static bool IsReady { get; private set; }
 
