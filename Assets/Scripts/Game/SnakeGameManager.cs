@@ -50,15 +50,24 @@ public class SnakeGameManager : MonoBehaviour
 
     [Header("Colores")]
     [SerializeField]
-    private Color _boardColor = new Color(0.1f, 0.08f, 0.16f);
+    private Color _boardColor = new Color32(27, 27, 27, 255);
     [SerializeField]
-    private Color _headColor = new Color(0.55f, 1f, 0.55f);
+    private Color _headColor = new Color32(242, 238, 220, 255);
+    // El cuerpo va rotando por los colores del arcoíris
     [SerializeField]
-    private Color _tailColor = new Color(0.1f, 0.55f, 0.3f);
+    private Color[] _bodyColors =
+    {
+        new Color32(0, 164, 153, 255),
+        new Color32(16, 167, 224, 255),
+        new Color32(140, 70, 190, 255),
+        new Color32(229, 40, 126, 255),
+        new Color32(240, 138, 36, 255),
+        new Color32(247, 167, 27, 255)
+    };
     [SerializeField]
-    private Color _foodColor = new Color(1f, 0.35f, 0.4f);
+    private Color _foodColor = new Color32(230, 50, 39, 255);
     [SerializeField]
-    private Color _bonusColor = new Color(1f, 0.82f, 0.2f);
+    private Color _bonusColor = new Color32(255, 213, 0, 255);
 
     // Swipe mínimo en píxeles para cambiar de dirección en pantalla táctil.
     private const float MinSwipeDistance = 40f;
@@ -382,7 +391,7 @@ public class SnakeGameManager : MonoBehaviour
     {
         while (_segments.Count < _body.Count)
         {
-            _segments.Add(CreateRenderer("Segment", SpriteFactory.RoundedBox, _tailColor, 10));
+            _segments.Add(CreateRenderer("Segment", SpriteFactory.RoundedBox, _headColor, 10));
         }
         while (_segments.Count > _body.Count)
         {
@@ -396,8 +405,7 @@ public class SnakeGameManager : MonoBehaviour
             segment.gameObject.SetActive(true);
             segment.transform.position = CellToWorld(_body[i]);
             segment.transform.localScale = Vector3.one * _cellSize * (i == 0 ? 0.95f : 0.85f);
-            float t = _body.Count > 1 ? (float)i / (_body.Count - 1) : 0f;
-            segment.color = Color.Lerp(_headColor, _tailColor, t);
+            segment.color = i == 0 || _bodyColors.Length == 0 ? _headColor : _bodyColors[(i - 1) % _bodyColors.Length];
             segment.sortingOrder = i == 0 ? 11 : 10;
         }
 

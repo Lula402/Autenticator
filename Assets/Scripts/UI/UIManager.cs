@@ -28,6 +28,10 @@ public class UIManager : MonoBehaviour
     [SerializeField]
     private GameObject _gameOverPanel;
 
+    [Header("Se oculta mientras se juega")]
+    [SerializeField]
+    private GameObject _footer;
+
     public AppScreen Current { get; private set; }
 
     void Awake()
@@ -47,6 +51,7 @@ public class UIManager : MonoBehaviour
         SetActive(_homePanel, screen == AppScreen.Home);
         SetActive(_gamePanel, screen == AppScreen.Game);
         SetActive(_gameOverPanel, screen == AppScreen.GameOver);
+        SetActive(_footer, screen != AppScreen.Game);
     }
 
     private static void SetActive(GameObject panel, bool active)

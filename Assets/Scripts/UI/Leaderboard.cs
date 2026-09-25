@@ -18,9 +18,24 @@ public class Leaderboard : MonoBehaviour
     [SerializeField]
     private TMP_Text _emptyLabel;
     [SerializeField]
-    private Color _rowColor = new Color(1f, 1f, 1f, 0.04f);
+    private Color _rowColor = new Color(1f, 1f, 1f, 0.05f);
     [SerializeField]
-    private Color _currentUserRowColor = new Color(0.13f, 0.67f, 0.35f, 0.35f);
+    private Color _currentUserRowColor = new Color(1f, 0.835f, 0f, 0.3f);
+    // Cada posición de la tabla toma un color del arcoíris
+    [SerializeField]
+    private Color[] _rankColors =
+    {
+        new Color32(255, 213, 0, 255),
+        new Color32(247, 167, 27, 255),
+        new Color32(240, 138, 36, 255),
+        new Color32(230, 50, 39, 255),
+        new Color32(229, 40, 126, 255),
+        new Color32(170, 80, 200, 255),
+        new Color32(90, 110, 210, 255),
+        new Color32(16, 167, 224, 255),
+        new Color32(0, 164, 153, 255),
+        new Color32(0, 164, 153, 255)
+    };
 
     private Query _query;
     private readonly List<GameObject> _rows = new List<GameObject>();
@@ -106,6 +121,10 @@ public class Leaderboard : MonoBehaviour
             row.SetActive(true);
 
             SetChildText(row, "Rank", (i + 1).ToString("00"));
+            if (_rankColors != null && _rankColors.Length > 0)
+            {
+                SetChildColor(row, "Rank", _rankColors[Mathf.Min(i, _rankColors.Length - 1)]);
+            }
             SetChildText(row, "Name", entry.Username);
             SetChildText(row, "Score", entry.Score.ToString());
 
@@ -123,6 +142,12 @@ public class Leaderboard : MonoBehaviour
     {
         Transform child = row.transform.Find(childName);
         if (child != null && child.TryGetComponent(out TMP_Text label)) label.text = text;
+    }
+
+    private static void SetChildColor(GameObject row, string childName, Color color)
+    {
+        Transform child = row.transform.Find(childName);
+        if (child != null && child.TryGetComponent(out TMP_Text label)) label.color = color;
     }
 
     private void SetEmptyText(string text)

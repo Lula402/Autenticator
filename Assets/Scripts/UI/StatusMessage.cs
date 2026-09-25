@@ -10,9 +10,9 @@ public class StatusMessage : MonoBehaviour
     private TMP_Text _label;
 
     [SerializeField]
-    private Color _infoColor = new Color(0.85f, 0.9f, 1f);
+    private Color _infoColor = new Color(0.106f, 0.106f, 0.106f);
     [SerializeField]
-    private Color _errorColor = new Color(1f, 0.45f, 0.45f);
+    private Color _errorColor = new Color(0.9f, 0.196f, 0.153f);
 
     private void Reset()
     {
