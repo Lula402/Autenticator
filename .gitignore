@@ -73,3 +73,9 @@ crashlytics-build.properties
 # Temporary auto-generated Android Assets
 /[Aa]ssets/[Ss]treamingAssets/aa.meta
 /[Aa]ssets/[Ss]treamingAssets/aa/*
+
+# Firebase: librerías de escritorio para macOS y Linux (no se usan en Windows ni Android, y pesan >100MB)
+/[Aa]ssets/[Ff]irebase/[Pp]lugins/x86_64/*.bundle
+/[Aa]ssets/[Ff]irebase/[Pp]lugins/x86_64/*.bundle.meta
+/[Aa]ssets/[Ff]irebase/[Pp]lugins/x86_64/*.so
+/[Aa]ssets/[Ff]irebase/[Pp]lugins/x86_64/*.so.meta

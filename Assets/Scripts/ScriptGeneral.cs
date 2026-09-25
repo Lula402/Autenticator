@@ -6,7 +6,7 @@ using UnityEngine.Networking;
 
 public class ScriptGeneral : MonoBehaviour
 {
-    private string Url = "https://sid-restapi.onrender.com";
+    private string Url = "http://127.0.0.1:1234/";
     private string token = "";
     private string username = "";
 
