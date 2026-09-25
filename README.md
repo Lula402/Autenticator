@@ -12,7 +12,7 @@ Aplicación Unity (Android) con arquitectura **serverless**: todo el backend lo 
 |---|---|
 | Proyecto Firebase para Unity-Android | `Assets/google-services.json`, package `com.luisagarcia.sfd4` |
 | Registro, login y recuperación de contraseña por correo | `ButtonRegister`, `ButtonLogin`, `ButtonResetPassword`, `ButtonLogout`, `AuthStateHandler` |
-| Nombre de usuario y datos adicionales en el registro | Se guardan en `users/{uid}`: `username`, `ciudad`, `fechaNacimiento` |
+| Nombre de usuario en el registro | Se guarda en `users/{uid}/username` junto con el puntaje |
 | Guardar puntajes de un juego funcional | Juego **Snake** (`SnakeGameManager`); `ScoreService` guarda el mejor puntaje con una transacción y el historial con `Push` |
 | Tabla de puntajes más altos | `Leaderboard`: `OrderByChild("score").LimitToLast(10)` con `ValueChanged` (**tiempo real**) |
 | Nombre completo visible | Pie de página en todas las pantallas (`AuthorFooter`, `ProjectInfo`) |
@@ -30,8 +30,6 @@ Controles: flechas / WASD, o deslizar el dedo (swipe) en el celular.
 users/
   {uid}/
     username: "luisa"
-    ciudad: "Medellín"
-    fechaNacimiento: "22/03/2004"
     score: 250          ← mejor puntaje (se usa para el leaderboard)
     creado: 1695651234000
 scores/

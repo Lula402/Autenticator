@@ -32,7 +32,7 @@ public class ButtonLogin : MonoBehaviour
 
         if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
         {
-            StatusMessage.Show("Escribe tu correo y tu contraseña.", true);
+            StatusMessage.Show("Completa todos los campos.", true);
             return;
         }
 
@@ -42,7 +42,6 @@ public class ButtonLogin : MonoBehaviour
     public void LoginUser(string email, string password)
     {
         _loginButton.interactable = false;
-        StatusMessage.Show("Iniciando sesión...");
 
         // ContinueWithOnMainThread evita errores al tocar la UI desde otro hilo.
         FirebaseService.Auth.SignInWithEmailAndPasswordAsync(email, password).ContinueWithOnMainThread(task =>

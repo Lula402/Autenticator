@@ -11,7 +11,6 @@ public class AuthStateHandler : MonoBehaviour
 
     void Start()
     {
-        StatusMessage.Show("Conectando con Firebase...");
         FirebaseService.WhenReady(() =>
         {
             FirebaseService.Auth.StateChanged += AuthStateChanged;

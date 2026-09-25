@@ -27,12 +27,11 @@ public class ButtonResetPassword : MonoBehaviour
         string email = _emailInputField.text.Trim();
         if (string.IsNullOrEmpty(email))
         {
-            StatusMessage.Show("Escribe el correo de tu cuenta.", true);
+            StatusMessage.Show("Escribe tu correo.", true);
             return;
         }
 
         _resetButton.interactable = false;
-        StatusMessage.Show("Enviando correo...");
 
         FirebaseService.Auth.SendPasswordResetEmailAsync(email).ContinueWithOnMainThread(task =>
         {
@@ -46,7 +45,7 @@ public class ButtonResetPassword : MonoBehaviour
             }
 
             Debug.Log("Password reset email sent to " + email);
-            StatusMessage.Show("Si el correo está registrado, te llegará un enlace para cambiar la contraseña. Revisa también spam.");
+            StatusMessage.Show("Revisa tu correo.");
         });
     }
 }

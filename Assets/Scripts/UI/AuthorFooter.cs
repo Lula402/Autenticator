@@ -14,6 +14,6 @@ public class AuthorFooter : MonoBehaviour
 
     void Awake()
     {
-        _label.text = $"Desarrollado por <b>{ProjectInfo.AuthorFullName}</b>  ·  {ProjectInfo.CourseName}  ·  Unity + Firebase";
+        _label.text = ProjectInfo.AuthorFullName;
     }
 }

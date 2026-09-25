@@ -35,7 +35,7 @@ public class Leaderboard : MonoBehaviour
     void OnEnable()
     {
         if (_rowTemplate != null) _rowTemplate.SetActive(false);
-        SetEmptyText("Cargando puntajes...");
+        SetEmptyText("...");
         FirebaseService.WhenReady(Subscribe);
     }
 
@@ -65,7 +65,7 @@ public class Leaderboard : MonoBehaviour
         if (args.DatabaseError != null)
         {
             Debug.LogError("Error leyendo el leaderboard: " + args.DatabaseError.Message);
-            SetEmptyText("No se pudo cargar la tabla de puntajes.");
+            SetEmptyText("Sin conexión");
             return;
         }
 
@@ -93,7 +93,7 @@ public class Leaderboard : MonoBehaviour
         foreach (GameObject row in _rows) Destroy(row);
         _rows.Clear();
 
-        SetEmptyText(entries.Count == 0 ? "Aún no hay puntajes. ¡Sé el primero!" : "");
+        SetEmptyText(entries.Count == 0 ? "Sin puntajes" : "");
 
         FirebaseUser user = FirebaseService.Auth.CurrentUser;
         string currentUserId = user != null ? user.UserId : null;
@@ -105,7 +105,7 @@ public class Leaderboard : MonoBehaviour
             row.name = "Row " + (i + 1);
             row.SetActive(true);
 
-            SetChildText(row, "Rank", "#" + (i + 1));
+            SetChildText(row, "Rank", (i + 1).ToString("00"));
             SetChildText(row, "Name", entry.Username);
             SetChildText(row, "Score", entry.Score.ToString());
 

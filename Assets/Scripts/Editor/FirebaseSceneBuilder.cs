@@ -118,40 +118,33 @@ public static class FirebaseSceneBuilder
     private static GameObject BuildLoginPanel(Transform root)
     {
         GameObject panel = CreatePanel(root, "LoginPanel");
-        Transform card = CreateCard(panel.transform, "Card", 720);
+        Transform card = CreateCard(panel.transform, "Card", 640);
 
         CreateTitle(card, ProjectInfo.GameName);
-        CreateSubtitle(card, "Inicia sesión para jugar Snake y guardar tus puntajes");
-        TMP_InputField email = CreateInput(card, "EmailField", "Correo electrónico", TMP_InputField.ContentType.EmailAddress);
+        TMP_InputField email = CreateInput(card, "EmailField", "Correo", TMP_InputField.ContentType.EmailAddress);
         TMP_InputField password = CreateInput(card, "PasswordField", "Contraseña", TMP_InputField.ContentType.Password);
 
-        Button login = CreateButton(card, "LoginButton", "Iniciar sesión", PrimaryColor);
+        Button login = CreateButton(card, "LoginButton", "Entrar", PrimaryColor);
         var buttonLogin = login.gameObject.AddComponent<ButtonLogin>();
         Set(buttonLogin, "_loginButton", login);
         Set(buttonLogin, "_emailInputField", email);
         Set(buttonLogin, "_passwordInputField", password);
 
-        CreateNavigationButton(card, "ForgotPasswordButton", "¿Olvidaste tu contraseña?", SecondaryColor, AppScreen.ResetPassword);
-        CreateNavigationButton(card, "GoToRegisterButton", "Crear una cuenta", SecondaryColor, AppScreen.Register);
+        CreateNavigationButton(card, "GoToRegisterButton", "Crear cuenta", SecondaryColor, AppScreen.Register);
+        CreateNavigationButton(card, "ForgotPasswordButton", "Olvidé mi contraseña", SecondaryColor, AppScreen.ResetPassword);
         return panel;
     }
 
     private static GameObject BuildRegisterPanel(Transform root)
     {
         GameObject panel = CreatePanel(root, "RegisterPanel");
-        Transform card = CreateCard(panel.transform, "Card", 820);
+        Transform card = CreateCard(panel.transform, "Card", 640);
 
-        CreateTitle(card, "Crear cuenta");
-        TMP_InputField username = CreateInput(card, "UsernameField", "Nombre de usuario", TMP_InputField.ContentType.Alphanumeric);
+        CreateTitle(card, "Registro");
+        TMP_InputField username = CreateInput(card, "UsernameField", "Usuario", TMP_InputField.ContentType.Alphanumeric);
         username.characterLimit = 16;
-        TMP_InputField email = CreateInput(card, "EmailField", "Correo electrónico", TMP_InputField.ContentType.EmailAddress);
-        TMP_InputField password = CreateInput(card, "PasswordField", "Contraseña (mínimo 6 caracteres)", TMP_InputField.ContentType.Password);
-        TMP_InputField confirm = CreateInput(card, "ConfirmPasswordField", "Confirmar contraseña", TMP_InputField.ContentType.Password);
-
-        Transform extraRow = CreateRow(card, "DatosAdicionales", 64);
-        TMP_InputField city = CreateInput(extraRow, "CityField", "Ciudad", TMP_InputField.ContentType.Standard);
-        TMP_InputField birthDate = CreateInput(extraRow, "BirthDateField", "Nacimiento (dd/mm/aaaa)", TMP_InputField.ContentType.Standard);
-        birthDate.characterLimit = 10;
+        TMP_InputField email = CreateInput(card, "EmailField", "Correo", TMP_InputField.ContentType.EmailAddress);
+        TMP_InputField password = CreateInput(card, "PasswordField", "Contraseña", TMP_InputField.ContentType.Password);
 
         Button register = CreateButton(card, "RegisterButton", "Registrarme", PrimaryColor);
         var buttonRegister = register.gameObject.AddComponent<ButtonRegister>();
@@ -159,24 +152,20 @@ public static class FirebaseSceneBuilder
         Set(buttonRegister, "_usernameInputField", username);
         Set(buttonRegister, "_emailInputField", email);
         Set(buttonRegister, "_passwordInputField", password);
-        Set(buttonRegister, "_confirmPasswordInputField", confirm);
-        Set(buttonRegister, "_cityInputField", city);
-        Set(buttonRegister, "_birthDateInputField", birthDate);
 
-        CreateNavigationButton(card, "BackToLoginButton", "Ya tengo cuenta", SecondaryColor, AppScreen.Login);
+        CreateNavigationButton(card, "BackToLoginButton", "Volver", SecondaryColor, AppScreen.Login);
         return panel;
     }
 
     private static GameObject BuildResetPasswordPanel(Transform root)
     {
         GameObject panel = CreatePanel(root, "ResetPasswordPanel");
-        Transform card = CreateCard(panel.transform, "Card", 720);
+        Transform card = CreateCard(panel.transform, "Card", 640);
 
-        CreateTitle(card, "Recuperar contraseña");
-        CreateSubtitle(card, "Escribe tu correo y te enviaremos un enlace para crear una contraseña nueva");
-        TMP_InputField email = CreateInput(card, "EmailField", "Correo electrónico", TMP_InputField.ContentType.EmailAddress);
+        CreateTitle(card, "Recuperar");
+        TMP_InputField email = CreateInput(card, "EmailField", "Correo", TMP_InputField.ContentType.EmailAddress);
 
-        Button send = CreateButton(card, "SendResetButton", "Enviar enlace", PrimaryColor);
+        Button send = CreateButton(card, "SendResetButton", "Enviar", PrimaryColor);
         var buttonReset = send.gameObject.AddComponent<ButtonResetPassword>();
         Set(buttonReset, "_resetButton", send);
         Set(buttonReset, "_emailInputField", email);
@@ -192,8 +181,8 @@ public static class FirebaseSceneBuilder
         var columns = CreateUIObject(panel.transform, "Columns");
         var columnsRect = columns.GetComponent<RectTransform>();
         columnsRect.anchorMin = columnsRect.anchorMax = new Vector2(0.5f, 0.5f);
-        columnsRect.sizeDelta = new Vector2(1500, 760);
-        columnsRect.anchoredPosition = new Vector2(0, 40);
+        columnsRect.sizeDelta = new Vector2(1400, 720);
+        columnsRect.anchoredPosition = new Vector2(0, 30);
         var columnsLayout = columns.AddComponent<HorizontalLayoutGroup>();
         columnsLayout.spacing = 40;
         columnsLayout.childControlWidth = true;
@@ -201,39 +190,31 @@ public static class FirebaseSceneBuilder
         columnsLayout.childForceExpandWidth = false;
         columnsLayout.childForceExpandHeight = true;
 
-        // Columna izquierda: perfil y acciones
-        Transform profile = CreateColumnCard(columns.transform, "ProfileCard", 600);
-        CreateTitle(profile, ProjectInfo.GameName);
-        TMP_Text greeting = CreateText(profile, "Greeting", "Hola", 40, TextAlignmentOptions.Center, TextColor, 56);
-        greeting.fontStyle = FontStyles.Bold;
-        TMP_Text details = CreateText(profile, "Details", "", 24, TextAlignmentOptions.Center, MutedTextColor, 70);
-        TMP_Text best = CreateText(profile, "BestScore", "Mejor puntaje: ...", 32, TextAlignmentOptions.Center, new Color32(255, 210, 80, 255), 50);
+        // Columna izquierda: usuario, récord y acciones
+        Transform profile = CreateColumnCard(columns.transform, "ProfileCard", 520);
+        TMP_Text username = CreateText(profile, "Username", "", 56, TextAlignmentOptions.Left, TextColor, 80);
+        username.fontStyle = FontStyles.Bold;
+        CreateText(profile, "BestScoreCaption", "Récord", 24, TextAlignmentOptions.Left, MutedTextColor, 34);
+        TMP_Text best = CreateText(profile, "BestScore", "-", 96, TextAlignmentOptions.Left, TextColor, 120);
+        best.fontStyle = FontStyles.Bold;
+
+        var spacer = CreateUIObject(profile, "Spacer");
+        spacer.AddComponent<LayoutElement>().flexibleHeight = 1;
 
         var profileLabels = profile.gameObject.AddComponent<ProfileLabels>();
-        Set(profileLabels, "_greetingLabel", greeting);
+        Set(profileLabels, "_usernameLabel", username);
         Set(profileLabels, "_bestScoreLabel", best);
-        Set(profileLabels, "_detailsLabel", details);
-
-        CreateText(profile, "HowToPlay",
-            "Come la comida <color=#FF5A66>roja</color> (+10) y la <color=#FFD133>dorada</color> (+30, desaparece rápido).\n" +
-            "No choques con los bordes ni contigo misma. Cada comida te hace más rápida.\n" +
-            "Muévete con las flechas / WASD o deslizando el dedo.",
-            22, TextAlignmentOptions.Center, MutedTextColor, 110);
 
         Button play = CreateButton(profile, "PlayButton", "Jugar", PrimaryColor);
         AddGameButton(play, GameButtonAction.StartGame);
 
-        Button logout = CreateButton(profile, "LogoutButton", "Cerrar sesión", DangerColor);
+        Button logout = CreateButton(profile, "LogoutButton", "Salir", SecondaryColor);
         var buttonLogout = logout.gameObject.AddComponent<ButtonLogout>();
         Set(buttonLogout, "_logoutButton", logout);
 
         // Columna derecha: tabla de puntajes
-        Transform board = CreateColumnCard(columns.transform, "LeaderboardCard", 860);
-        CreateTitle(board, "Tabla de puntajes");
-        CreateSubtitle(board, "Top 10 · se actualiza en tiempo real");
-
-        GameObject header = CreateLeaderboardRow(board, "Header", "#", "Jugador", "Puntaje", 26, MutedTextColor);
-        header.GetComponent<Image>().color = new Color(0, 0, 0, 0);
+        Transform board = CreateColumnCard(columns.transform, "LeaderboardCard", 840);
+        CreateTitle(board, "Top 10");
 
         var rows = CreateUIObject(board, "Rows");
         var rowsLayout = rows.AddComponent<VerticalLayoutGroup>();
@@ -244,10 +225,10 @@ public static class FirebaseSceneBuilder
         rowsLayout.childForceExpandHeight = false;
         rows.AddComponent<LayoutElement>().flexibleHeight = 1;
 
-        GameObject template = CreateLeaderboardRow(rows.transform, "RowTemplate", "#1", "Jugador", "0", 28, TextColor);
+        GameObject template = CreateLeaderboardRow(rows.transform, "RowTemplate", "01", "usuario", "0", 30, TextColor);
         template.SetActive(false);
 
-        TMP_Text empty = CreateText(rows.transform, "EmptyLabel", "Cargando puntajes...", 26, TextAlignmentOptions.Center, MutedTextColor, 60);
+        TMP_Text empty = CreateText(rows.transform, "EmptyLabel", "...", 26, TextAlignmentOptions.Center, MutedTextColor, 60);
 
         var leaderboard = board.gameObject.AddComponent<Leaderboard>();
         Set(leaderboard, "_rowsContainer", rows.transform);
@@ -276,7 +257,7 @@ public static class FirebaseSceneBuilder
         length.fontStyle = FontStyles.Bold;
         Anchor(length.rectTransform, new Vector2(0.6f, 0f), new Vector2(1f, 1f), new Vector2(0, 0), new Vector2(-40, 0));
 
-        Button end = CreateButton(topBar.transform, "EndGameButton", "Terminar", SecondaryColor);
+        Button end = CreateButton(topBar.transform, "EndGameButton", "Salir", SecondaryColor);
         Object.DestroyImmediate(end.GetComponent<LayoutElement>());
         var endRect = end.GetComponent<RectTransform>();
         endRect.anchorMin = endRect.anchorMax = new Vector2(0.5f, 0.5f);
@@ -294,15 +275,14 @@ public static class FirebaseSceneBuilder
         panel.GetComponent<Image>().color = new Color(BackgroundColor.r, BackgroundColor.g, BackgroundColor.b, 0.85f);
         Transform card = CreateCard(panel.transform, "Card", 640);
 
-        CreateTitle(card, "¡Fin del juego!");
-        CreateSubtitle(card, "Tu puntaje");
+        CreateTitle(card, "Fin del juego");
         TMP_Text finalScore = CreateText(card, "FinalScore", "0", 96, TextAlignmentOptions.Center, new Color32(255, 210, 80, 255), 120);
         finalScore.fontStyle = FontStyles.Bold;
         TMP_Text record = CreateText(card, "RecordLabel", "", 30, TextAlignmentOptions.Center, TextColor, 50);
 
-        Button again = CreateButton(card, "PlayAgainButton", "Jugar de nuevo", PrimaryColor);
+        Button again = CreateButton(card, "PlayAgainButton", "Otra vez", PrimaryColor);
         AddGameButton(again, GameButtonAction.StartGame);
-        CreateNavigationButton(card, "MenuButton", "Menú y puntajes", SecondaryColor, AppScreen.Home);
+        CreateNavigationButton(card, "MenuButton", "Menú", SecondaryColor, AppScreen.Home);
 
         Set(gameManager, "_finalScoreLabel", finalScore);
         Set(gameManager, "_recordLabel", record);
@@ -370,19 +350,6 @@ public static class FirebaseSceneBuilder
         layout.childForceExpandHeight = false;
     }
 
-    private static Transform CreateRow(Transform parent, string name, float height)
-    {
-        GameObject row = CreateUIObject(parent, name);
-        var layout = row.AddComponent<HorizontalLayoutGroup>();
-        layout.spacing = 18;
-        layout.childControlWidth = true;
-        layout.childControlHeight = true;
-        layout.childForceExpandWidth = true;
-        layout.childForceExpandHeight = true;
-        row.AddComponent<LayoutElement>().preferredHeight = height;
-        return row.transform;
-    }
-
     private static TMP_Text CreateText(Transform parent, string name, string text, float size,
         TextAlignmentOptions alignment, Color color, float preferredHeight = -1)
     {
@@ -401,11 +368,6 @@ public static class FirebaseSceneBuilder
     {
         TMP_Text title = CreateText(parent, "Title", text, 54, TextAlignmentOptions.Center, TextColor, 72);
         title.fontStyle = FontStyles.Bold;
-    }
-
-    private static void CreateSubtitle(Transform parent, string text)
-    {
-        CreateText(parent, "Subtitle", text, 26, TextAlignmentOptions.Center, MutedTextColor, 64);
     }
 
     private static TMP_InputField CreateInput(Transform parent, string name, string placeholder, TMP_InputField.ContentType contentType)
