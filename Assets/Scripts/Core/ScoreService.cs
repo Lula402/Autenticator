@@ -8,7 +8,6 @@ using UnityEngine;
 // Guarda los puntajes del jugador en la Realtime Database.
 public static class ScoreService
 {
-    // onComplete(exito, esNuevoRecord, mejorPuntaje)
     public static void SubmitScore(int score, Action<bool, bool, long> onComplete)
     {
         FirebaseUser user = FirebaseService.Auth.CurrentUser;
@@ -20,8 +19,6 @@ public static class ScoreService
 
         SaveToHistory(user.UserId, score);
 
-        // users/{uid}/score guarda solo el mejor puntaje. Se usa una transacción para
-        // comparar con el valor actual del servidor antes de escribir.
         bool isNewRecord = false;
         FirebaseService.Users.Child(user.UserId).Child("score").RunTransaction(mutableData =>
         {
@@ -46,7 +43,6 @@ public static class ScoreService
         });
     }
 
-    // scores/{uid}/{pushId}: cada partida queda registrada con un ID único generado con Push.
     private static void SaveToHistory(string userId, int score)
     {
         var entry = new Dictionary<string, object>
