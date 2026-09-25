@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "891269262075",
+    "firebase_url": "https://sfd4-firebase-default-rtdb.firebaseio.com",
+    "project_id": "sfd4-firebase",
+    "storage_bucket": "sfd4-firebase.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:891269262075:android:de485454ed303701261e5e",
+        "android_client_info": {
+          "package_name": "com.luisagarcia.sfd4"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCn7D5m9Mr8LsEfTQOl3tMWVdwaYYPTzA8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
