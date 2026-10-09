@@ -24,7 +24,7 @@ public class CompetitiveMatch : MonoBehaviour
     private Button _exitButton;
     [SerializeField]
     private Button _rematchButton;
-    // "Jugar de nuevo" y "Menú": se ocultan mientras estoy en un room
+    // Lo que solo es del modo solitario ("Jugar de nuevo", "Menú", récord personal): se oculta mientras estoy en un room
     [SerializeField]
     private GameObject[] _soloButtons;
 

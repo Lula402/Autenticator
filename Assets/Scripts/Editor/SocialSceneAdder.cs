@@ -134,7 +134,7 @@ public static class SocialSceneAdder
         Set(match, "_rematchButton", rematchButton);
         var serializedMatch = new SerializedObject(match);
         SerializedProperty solo = serializedMatch.FindProperty("_soloButtons");
-        Transform[] soloButtons = { gameOverCard.Find("PlayAgainButton"), gameOverCard.Find("MenuButton") };
+        Transform[] soloButtons = { gameOverCard.Find("PlayAgainButton"), gameOverCard.Find("MenuButton"), gameOverCard.Find("RecordLabel") };
         solo.arraySize = 0;
         foreach (Transform button in soloButtons)
         {
