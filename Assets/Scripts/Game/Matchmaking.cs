@@ -6,10 +6,6 @@ using Firebase.Extensions;
 using UnityEngine;
 using UnityEngine.UI;
 
-// Matchmaking por nivel. Mi nivel = promedio de mis últimas 3 partidas (scores/{yo}).
-// Me pongo en la cola matchmaking/{yo}. Dos jugadores se emparejan si cada uno es el MÁS CERCANO
-// en promedio del otro; solo el de UID menor crea el room, así nunca se crean dos.
-// Nadie se empareja hasta llevar 5 s en la cola, para dar tiempo a que entren más jugadores.
 public class Matchmaking : MonoBehaviour
 {
     private const float WaitSeconds = 5f;
@@ -24,11 +20,10 @@ public class Matchmaking : MonoBehaviour
     private DatabaseReference _queueReference;
     private DatabaseReference _matchReference;
     private DataSnapshot _queue;
-    private string _myUid;      // != null mientras estoy buscando
-    private string _roomId;     // llega por matches/{yo}
+    private string _myUid;     
+    private string _roomId;  
     private bool _queueDirty;
     private bool _creatingRoom;
-    // uid -> momento (Time.time) en que lo vi entrar a la cola
     private readonly Dictionary<string, float> _firstSeen = new Dictionary<string, float>();
 
     private DatabaseReference Root => FirebaseService.Database.RootReference;
@@ -57,7 +52,6 @@ public class Matchmaking : MonoBehaviour
                     return;
                 }
 
-                // Promedio de las últimas 3 (o de las que haya); sin partidas, nivel 0.
                 double sum = 0;
                 int count = 0;
                 foreach (DataSnapshot score in scoresTask.Result.Children)
@@ -125,7 +119,6 @@ public class Matchmaking : MonoBehaviour
 
     void Update()
     {
-        // Me asignaron un room: borro el aviso, salgo de la cola y entro a la partida.
         if (_roomId != null)
         {
             string roomId = _roomId;
@@ -148,7 +141,6 @@ public class Matchmaking : MonoBehaviour
             }
         }
 
-        // Se revisa en cada frame (no solo cuando cambia la cola) porque la espera depende del tiempo.
         TryMatch();
     }
 
@@ -162,9 +154,9 @@ public class Matchmaking : MonoBehaviour
         if (_myUid == null || _creatingRoom || _queue == null || !_queue.HasChild(_myUid)) return;
 
         string rival = Closest(_myUid);
-        if (rival == null || Closest(rival) != _myUid) return;           // no hay cercanía mutua
-        if (string.CompareOrdinal(_myUid, rival) > 0) return;            // el room lo crea el de UID menor
-        if (!HasWaited(_myUid) || !HasWaited(rival)) return;             // los dos llevan 5 s en la cola
+        if (rival == null || Closest(rival) != _myUid) return;           
+        if (string.CompareOrdinal(_myUid, rival) > 0) return;           
+        if (!HasWaited(_myUid) || !HasWaited(rival)) return;         
 
         _creatingRoom = true;
         string roomId = Root.Child("rooms").Push().Key;
@@ -191,8 +183,6 @@ public class Matchmaking : MonoBehaviour
         });
     }
 
-    // El jugador de la cola con promedio más cercano al de uid. Empate: el primero en orden de clave
-    // (los dos clientes recorren la cola en el mismo orden, así que llegan al mismo resultado).
     private string Closest(string uid)
     {
         double average = Average(uid);
