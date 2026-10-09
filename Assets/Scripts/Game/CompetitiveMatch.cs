@@ -39,6 +39,7 @@ public class CompetitiveMatch : MonoBehaviour
     private bool _started;   // los dos marcaron ready y empezó la ronda
     private bool _finished;  // la ronda ya tiene resultado
     private string _title = "";
+    private float _countdown; // > 0 mientras corre la cuenta regresiva antes de empezar
 
     private int _myScore;
     private bool _myAlive;
@@ -95,7 +96,24 @@ public class CompetitiveMatch : MonoBehaviour
 
     void Update()
     {
-        if (!_dirty || _room == null || !InMatch) return;
+        if (!InMatch) return;
+
+        // Cuenta regresiva de 3 s; al llegar a 0 arranca mi Snake.
+        if (_countdown > 0)
+        {
+            _countdown -= Time.deltaTime;
+            if (_countdown > 0)
+            {
+                StatusMessage.Show("La partida empieza en " + Mathf.CeilToInt(_countdown) + "...");
+            }
+            else
+            {
+                SnakeGameManager.Instance.StartGame();
+                WriteLive();
+            }
+        }
+
+        if (!_dirty || _room == null) return;
         _dirty = false;
 
         ReadRoom();
@@ -109,12 +127,11 @@ public class CompetitiveMatch : MonoBehaviour
             return;
         }
 
-        // Inicio: cuando los dos marcaron ready, cada uno arranca su Snake.
+        // Inicio: cuando los dos marcaron ready, empieza la cuenta regresiva de cada uno.
         if (!_started && !_rivalLeft && _room.Child("ready").Child(round).ChildrenCount == 2)
         {
             _started = true;
-            SnakeGameManager.Instance.StartGame();
-            WriteLive();
+            _countdown = 3f;
         }
 
         Evaluate();
@@ -175,7 +192,7 @@ public class CompetitiveMatch : MonoBehaviour
         if (_rivalLeft)
         {
             // Si estoy jugando, termino mi partida; EndGame vuelve a llamar aquí con _myAlive = false.
-            if (_started && _myAlive) SnakeGameManager.Instance.EndGame();
+            if (SnakeGameManager.Instance.IsPlaying) SnakeGameManager.Instance.EndGame();
             else Finish("VICTORIA");
             return;
         }
@@ -205,6 +222,7 @@ public class CompetitiveMatch : MonoBehaviour
     private void Finish(string title)
     {
         _finished = true;
+        _countdown = 0;
         _title = title;
         if (UIManager.Instance.Current != AppScreen.GameOver) UIManager.Instance.Show(AppScreen.GameOver);
         _rematchButton.gameObject.SetActive(!_rivalLeft);
@@ -239,6 +257,7 @@ public class CompetitiveMatch : MonoBehaviour
         _roomReference.ValueChanged -= HandleRoomChanged;
         _roomReference = null;
         _room = null;
+        _countdown = 0;
 
         SetMatchUI(false);
         UIManager.Instance.Show(AppScreen.Home);

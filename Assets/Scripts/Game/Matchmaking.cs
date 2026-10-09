@@ -9,8 +9,11 @@ using UnityEngine.UI;
 // Matchmaking por nivel. Mi nivel = promedio de mis últimas 3 partidas (scores/{yo}).
 // Me pongo en la cola matchmaking/{yo}. Dos jugadores se emparejan si cada uno es el MÁS CERCANO
 // en promedio del otro; solo el de UID menor crea el room, así nunca se crean dos.
+// Nadie se empareja hasta llevar 5 s en la cola, para dar tiempo a que entren más jugadores.
 public class Matchmaking : MonoBehaviour
 {
+    private const float WaitSeconds = 5f;
+
     [SerializeField]
     private Button _searchButton;
     [SerializeField]
@@ -25,6 +28,8 @@ public class Matchmaking : MonoBehaviour
     private string _roomId;     // llega por matches/{yo}
     private bool _queueDirty;
     private bool _creatingRoom;
+    // uid -> momento (Time.time) en que lo vi entrar a la cola
+    private readonly Dictionary<string, float> _firstSeen = new Dictionary<string, float>();
 
     private DatabaseReference Root => FirebaseService.Database.RootReference;
 
@@ -102,6 +107,7 @@ public class Matchmaking : MonoBehaviour
         _queue = null;
         _myUid = null;
         _creatingRoom = false;
+        _firstSeen.Clear();
     }
 
     private void HandleQueueChanged(object sender, ValueChangedEventArgs args)
@@ -133,11 +139,22 @@ public class Matchmaking : MonoBehaviour
             return;
         }
 
-        if (_queueDirty)
+        if (_queueDirty && _queue != null)
         {
             _queueDirty = false;
-            TryMatch();
+            foreach (DataSnapshot player in _queue.Children)
+            {
+                if (!_firstSeen.ContainsKey(player.Key)) _firstSeen[player.Key] = Time.time;
+            }
         }
+
+        // Se revisa en cada frame (no solo cuando cambia la cola) porque la espera depende del tiempo.
+        TryMatch();
+    }
+
+    private bool HasWaited(string uid)
+    {
+        return _firstSeen.TryGetValue(uid, out float seen) && Time.time - seen >= WaitSeconds;
     }
 
     private void TryMatch()
@@ -147,6 +164,7 @@ public class Matchmaking : MonoBehaviour
         string rival = Closest(_myUid);
         if (rival == null || Closest(rival) != _myUid) return;           // no hay cercanía mutua
         if (string.CompareOrdinal(_myUid, rival) > 0) return;            // el room lo crea el de UID menor
+        if (!HasWaited(_myUid) || !HasWaited(rival)) return;             // los dos llevan 5 s en la cola
 
         _creatingRoom = true;
         string roomId = Root.Child("rooms").Push().Key;
