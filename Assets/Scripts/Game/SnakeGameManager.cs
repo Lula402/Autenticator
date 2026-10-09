@@ -22,6 +22,10 @@ public class SnakeGameManager : MonoBehaviour
     [SerializeField]
     private TMP_Text _recordLabel;
 
+    [Header("Competitivo (opcional)")]
+    [SerializeField]
+    private CompetitiveMatch _match;
+
     [Header("Tablero")]
     [SerializeField]
     private int _columns = 24;
@@ -153,6 +157,8 @@ public class SnakeGameManager : MonoBehaviour
                 _recordLabel.text = "Tu récord: " + best;
             }
         });
+
+        if (_match != null) _match.OnMyGameOver(finalScore);
     }
 
     public void StopGame()
@@ -229,6 +235,7 @@ public class SnakeGameManager : MonoBehaviour
 
         Render();
         if (grows) UpdateHud();
+        if (grows && _match != null) _match.OnScoreChanged(_score);
     }
 
     private bool IsInsideBoard(Vector2Int cell)

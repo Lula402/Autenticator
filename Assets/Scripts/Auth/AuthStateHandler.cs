@@ -1,4 +1,6 @@
 using Firebase.Auth;
+using Firebase.Database;
+using Firebase.Extensions;
 using UnityEngine;
 
 // Escucha el estado de autenticación de Firebase y muestra el panel que corresponde.
@@ -47,11 +49,28 @@ public class AuthStateHandler : MonoBehaviour
         {
             Debug.Log("User is signed in: " + user.Email);
             UIManager.Instance.Show(AppScreen.Home);
+            SetOnline(user);
         }
         else
         {
             if (SnakeGameManager.Instance != null) SnakeGameManager.Instance.StopGame();
             UIManager.Instance.Show(AppScreen.Login);
         }
+    }
+
+    // users-online/{uid} = username. Si la app se cae, Firebase borra el nodo solo (OnDisconnect).
+    private void SetOnline(FirebaseUser user)
+    {
+        FirebaseService.Users.Child(user.UserId).Child("username").GetValueAsync().ContinueWithOnMainThread(task =>
+        {
+            string username = null;
+            if (!task.IsFaulted && !task.IsCanceled && task.Result.Value != null) username = task.Result.Value.ToString();
+            if (string.IsNullOrEmpty(username)) username = user.DisplayName;
+            if (string.IsNullOrEmpty(username)) username = user.Email.Split('@')[0];
+
+            DatabaseReference onlineRef = FirebaseService.Database.RootReference.Child("users-online").Child(user.UserId);
+            onlineRef.OnDisconnect().RemoveValue();
+            onlineRef.SetValueAsync(username);
+        });
     }
 }
