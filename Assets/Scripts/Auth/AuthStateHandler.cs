@@ -50,6 +50,7 @@ public class AuthStateHandler : MonoBehaviour
             Debug.Log("User is signed in: " + user.Email);
             UIManager.Instance.Show(AppScreen.Home);
             SetOnline(user);
+            user.TokenAsync(false); // pide el token al iniciar sesión
         }
         else
         {
