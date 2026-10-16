@@ -41,9 +41,7 @@ public class OnlineUsersHandler : MonoBehaviour
     {
         if (!FirebaseService.IsReady) return;
 
-        // Me suscribo al iniciar sesión y me desuscribo al cerrarla.
-        FirebaseUser user = FirebaseService.Auth.CurrentUser;
-        string uid = user != null ? user.UserId : null;
+        string uid = FirebaseService.ReadyUid;
         if (uid != _myUid)
         {
             Unsubscribe();

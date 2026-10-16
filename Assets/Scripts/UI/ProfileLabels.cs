@@ -27,8 +27,8 @@ public class ProfileLabels : MonoBehaviour
     {
         if (!isActiveAndEnabled || _userReference != null) return;
 
-        FirebaseUser user = FirebaseService.Auth.CurrentUser;
-        if (user == null) return;
+            FirebaseUser user = FirebaseService.Auth.CurrentUser;
+            if (user == null || FirebaseService.ReadyUid != user.UserId) return;
 
         _usernameLabel.text = string.IsNullOrEmpty(user.DisplayName) ? user.Email : user.DisplayName;
         _bestScoreLabel.text = "-";

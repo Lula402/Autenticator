@@ -48,12 +48,30 @@ public class AuthStateHandler : MonoBehaviour
         if (user != null)
         {
             Debug.Log("User is signed in: " + user.Email);
-            UIManager.Instance.Show(AppScreen.Home);
-            SetOnline(user);
-            user.TokenAsync(false); // pide el token al iniciar sesión
+            FirebaseService.ReadyUid = null; 
+
+            // Primero el token: sin él, la base de datos no sabe quién pide los datos y los niega.
+            // Solo cuando llega se publica ReadyUid; los listeners y el Home esperan a ese valor.
+            user.TokenAsync(false).ContinueWithOnMainThread(task =>
+            {
+                FirebaseUser current = FirebaseService.Auth.CurrentUser;
+                if (current == null || current.UserId != user.UserId) return; // cerró sesión mientras tanto
+
+                if (task.IsFaulted || task.IsCanceled)
+                {
+                    StatusMessage.Show("No se pudo validar la sesión. Inicia sesión de nuevo.", true);
+                    FirebaseService.Auth.SignOut();
+                    return;
+                }
+
+                FirebaseService.ReadyUid = user.UserId;
+                UIManager.Instance.Show(AppScreen.Home);
+                SetOnline(user);
+            });
         }
         else
         {
+            FirebaseService.ReadyUid = null;
             if (SnakeGameManager.Instance != null) SnakeGameManager.Instance.StopGame();
             UIManager.Instance.Show(AppScreen.Login);
         }

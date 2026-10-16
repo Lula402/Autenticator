@@ -62,7 +62,7 @@ public class Leaderboard : MonoBehaviour
     private void Subscribe()
     {
         if (!isActiveAndEnabled || _query != null) return;
-        if (FirebaseService.Auth.CurrentUser == null) return;
+        if (FirebaseService.ReadyUid == null) return;
 
         _query = FirebaseService.Users.OrderByChild("score").LimitToLast(_maxEntries);
         _query.ValueChanged += HandleValueChanged;

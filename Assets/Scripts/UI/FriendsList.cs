@@ -30,8 +30,7 @@ public class FriendsList : MonoBehaviour
     {
         if (!FirebaseService.IsReady) return;
 
-        FirebaseUser user = FirebaseService.Auth.CurrentUser;
-        string uid = user != null ? user.UserId : null;
+        string uid = FirebaseService.ReadyUid;
         if (uid != _myUid)
         {
             if (_reference != null) _reference.ValueChanged -= HandleValueChanged;

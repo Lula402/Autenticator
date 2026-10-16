@@ -38,8 +38,7 @@ public class FriendRequests : MonoBehaviour
     {
         if (!FirebaseService.IsReady) return;
 
-        FirebaseUser user = FirebaseService.Auth.CurrentUser;
-        string uid = user != null ? user.UserId : null;
+        string uid = FirebaseService.ReadyUid;
         if (uid != _myUid)
         {
             Unsubscribe();
@@ -96,8 +95,7 @@ public class FriendRequests : MonoBehaviour
             StatusMessage.Show("Ya le enviaste una solicitud.", true);
             return;
         }
-        FirebaseService.Auth.CurrentUser.TokenAsync(false).ContinueWithOnMainThread(_ =>
-        {
+
             Root.Child("friends").Child(_myUid).Child(targetUid).GetValueAsync().ContinueWithOnMainThread(task =>
         {
             if (task.IsFaulted || task.IsCanceled)
@@ -134,7 +132,6 @@ public class FriendRequests : MonoBehaviour
             });
         });
 
-        });
     }
 
     private void WatchSent(string targetUid)

@@ -13,6 +13,7 @@ public class FirebaseService : MonoBehaviour
     public const string DatabaseUrl = "https://sfd4-firebase-default-rtdb.firebaseio.com/";
 
     public static bool IsReady { get; private set; }
+    public static string ReadyUid { get; set; }
 
     private static event Action _onReady;
 
@@ -33,6 +34,7 @@ public class FirebaseService : MonoBehaviour
     {
         IsReady = false;
         _onReady = null;
+        ReadyUid = null;
     }
 
     // Ejecuta la acción cuando Firebase esté listo (o de inmediato si ya lo está).
