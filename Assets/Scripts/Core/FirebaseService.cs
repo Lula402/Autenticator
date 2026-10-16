@@ -68,6 +68,7 @@ public class FirebaseService : MonoBehaviour
             }
 
             IsReady = true;
+            Database.GoOnline(); // por si una ejecución anterior en el editor dejó la conexión cerrada con GoOffline
             Debug.Log("Firebase listo.");
 
             Action callbacks = _onReady;

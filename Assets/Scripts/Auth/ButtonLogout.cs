@@ -1,3 +1,5 @@
+using Firebase.Auth;
+using Firebase.Extensions;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -16,12 +18,17 @@ public class ButtonLogout : MonoBehaviour
         _logoutButton.onClick.AddListener(() =>
         {
             if (SnakeGameManager.Instance != null) SnakeGameManager.Instance.StopGame();
-            // Me quito de users-online antes de cerrar sesión (después ya no tendría permiso).
-            if (FirebaseService.Auth.CurrentUser != null)
+
+            FirebaseUser user = FirebaseService.Auth.CurrentUser;
+            if (user == null)
             {
-                FirebaseService.Database.RootReference.Child("users-online").Child(FirebaseService.Auth.CurrentUser.UserId).SetValueAsync(null);
+                FirebaseService.Auth.SignOut();
+                return;
             }
-            FirebaseService.Auth.SignOut();
+
+            // Me quito de users-online y SOLO cuando termina cierro sesión (después ya no tendría permiso).
+            FirebaseService.Database.RootReference.Child("users-online").Child(user.UserId).SetValueAsync(null)
+                .ContinueWithOnMainThread(_ => FirebaseService.Auth.SignOut());
             // AuthStateHandler detecta el cambio y vuelve al login.
         });
     }

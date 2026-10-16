@@ -22,12 +22,13 @@ public class OnlineUsersHandler : MonoBehaviour
     // uid -> username de los que están en línea
     private readonly Dictionary<string, string> _online = new Dictionary<string, string>();
     private readonly List<GameObject> _rows = new List<GameObject>();
-    // Mis amigos, cargados UNA vez al iniciar sesión
+    // Mis amigos, se mantienen al día escuchando friends/{yo}
     private readonly HashSet<string> _friends = new HashSet<string>();
     // Los que ya estaban en línea al entrar: por ellos no se avisa
     private readonly HashSet<string> _alreadyOnline = new HashSet<string>();
 
     private DatabaseReference _reference;
+    private DatabaseReference _friendsReference;
     private string _myUid;
     private bool _dirty;
     private string _notice;
@@ -86,6 +87,10 @@ public class OnlineUsersHandler : MonoBehaviour
                 _reference = root.Child("users-online");
                 _reference.ChildAdded += HandleChildAdded;
                 _reference.ChildRemoved += HandleChildRemoved;
+
+                // Mis amigos en vivo: si alguien acepta mi solicitud, su botón "Agregar" desaparece.
+                _friendsReference = root.Child("friends").Child(uid);
+                _friendsReference.ValueChanged += HandleFriendsChanged;
             });
         });
     }
@@ -97,6 +102,11 @@ public class OnlineUsersHandler : MonoBehaviour
             _reference.ChildAdded -= HandleChildAdded;
             _reference.ChildRemoved -= HandleChildRemoved;
             _reference = null;
+        }
+        if (_friendsReference != null)
+        {
+            _friendsReference.ValueChanged -= HandleFriendsChanged;
+            _friendsReference = null;
         }
         _online.Clear();
         _friends.Clear();
@@ -130,6 +140,14 @@ public class OnlineUsersHandler : MonoBehaviour
         if (_friends.Contains(snapshot.Key)) _notice = username + " se desconectó";
     }
 
+    private void HandleFriendsChanged(object sender, ValueChangedEventArgs args)
+    {
+        if (args.DatabaseError != null) return;
+        _friends.Clear();
+        foreach (DataSnapshot friend in args.Snapshot.Children) _friends.Add(friend.Key);
+        _dirty = true; // redibuja la lista con los botones correctos
+    }
+
     private void Render()
     {
         foreach (GameObject row in _rows) Destroy(row);
@@ -144,14 +162,18 @@ public class OnlineUsersHandler : MonoBehaviour
             row.name = uid; // el UID queda guardado en la fila (no se muestra)
             row.SetActive(true);
             row.transform.Find("Name").GetComponent<TMP_Text>().text = pair.Value;
-            row.transform.Find("AddButton").GetComponent<Button>().onClick.AddListener(() => _friendRequests.Send(uid));
+            Button addButton = row.transform.Find("AddButton").GetComponent<Button>();
+            if (_friends.Contains(uid)) addButton.gameObject.SetActive(false); // ya somos amigos
+            else addButton.onClick.AddListener(() => _friendRequests.Send(uid));
             _rows.Add(row);
         }
     }
 
     private void OnApplicationQuit()
     {
-        if (_myUid == null) return;
-        FirebaseService.Database.RootReference.Child("users-online").Child(_myUid).SetValueAsync(null);
+        if (!FirebaseService.IsReady) return; // Firebase nunca se inicializó: no hay conexión que cerrar
+        if (_myUid != null) FirebaseService.Database.RootReference.Child("users-online").Child(_myUid).SetValueAsync(null);
+        // Cierra la conexión de forma limpia: Firebase ve la desconexión y ejecuta el OnDisconnect (borra users-online).
+        FirebaseService.Database.GoOffline();
     }
 }
