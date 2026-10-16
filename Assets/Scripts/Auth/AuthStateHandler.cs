@@ -57,6 +57,9 @@ public class AuthStateHandler : MonoBehaviour
             FirebaseService.Database.RootReference.Child("users").Child(user.UserId).GetValueAsync().ContinueWithOnMainThread(t =>
                 Debug.Log("DIAG lectura users/uid: " + (t.IsFaulted ? "DENEGADA " + t.Exception.GetBaseException().Message : "ok")));
             // -----------------------------------------------
+            foreach (string path in new[] { "users-online", "friends/" + user.UserId, "friendRequests/received/" + user.UserId })
+                FirebaseService.Database.RootReference.Child(path).GetValueAsync().ContinueWithOnMainThread(t =>
+                    Debug.Log("DIAG " + path + ": " + (t.IsFaulted ? "DENEGADA" : "ok")));
         }
         else
         {
