@@ -96,8 +96,9 @@ public class FriendRequests : MonoBehaviour
             StatusMessage.Show("Ya le enviaste una solicitud.", true);
             return;
         }
-
-        Root.Child("friends").Child(_myUid).Child(targetUid).GetValueAsync().ContinueWithOnMainThread(task =>
+        FirebaseService.Auth.CurrentUser.TokenAsync(false).ContinueWithOnMainThread(_ =>
+        {
+            Root.Child("friends").Child(_myUid).Child(targetUid).GetValueAsync().ContinueWithOnMainThread(task =>
         {
             if (task.IsFaulted || task.IsCanceled)
             {
@@ -131,6 +132,8 @@ public class FriendRequests : MonoBehaviour
                 StatusMessage.Show("Solicitud enviada.");
                 WatchSent(targetUid);
             });
+        });
+
         });
     }
 
