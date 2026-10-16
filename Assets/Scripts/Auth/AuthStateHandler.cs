@@ -32,7 +32,7 @@ public class AuthStateHandler : MonoBehaviour
         _stateDirty = true;
     }
 
-        void Update()
+    void Update()
     {
         if (!_stateDirty) return;
         _stateDirty = false;
@@ -50,16 +50,6 @@ public class AuthStateHandler : MonoBehaviour
             Debug.Log("User is signed in: " + user.Email);
             UIManager.Instance.Show(AppScreen.Home);
             SetOnline(user);
-
-            // ---- DIAGNÓSTICO TEMPORAL (borrar después) ----
-            user.TokenAsync(false).ContinueWithOnMainThread(t =>
-                Debug.Log("DIAG token: " + (t.IsFaulted ? "FALLO " + t.Exception.GetBaseException().Message : "ok")));
-            FirebaseService.Database.RootReference.Child("users").Child(user.UserId).GetValueAsync().ContinueWithOnMainThread(t =>
-                Debug.Log("DIAG lectura users/uid: " + (t.IsFaulted ? "DENEGADA " + t.Exception.GetBaseException().Message : "ok")));
-            // -----------------------------------------------
-            foreach (string path in new[] { "users-online", "friends/" + user.UserId, "friendRequests/received/" + user.UserId })
-                FirebaseService.Database.RootReference.Child(path).GetValueAsync().ContinueWithOnMainThread(t =>
-                    Debug.Log("DIAG " + path + ": " + (t.IsFaulted ? "DENEGADA" : "ok")));
         }
         else
         {
@@ -67,7 +57,9 @@ public class AuthStateHandler : MonoBehaviour
             UIManager.Instance.Show(AppScreen.Login);
         }
     }
+
     // users-online/{uid} = username. Si la app se cae, Firebase borra el nodo solo (OnDisconnect).
+  
     private void SetOnline(FirebaseUser user)
     {
         FirebaseService.Users.Child(user.UserId).Child("username").GetValueAsync().ContinueWithOnMainThread(task =>
